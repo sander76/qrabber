@@ -1,8 +1,8 @@
 import logging
 from typing import List
 
-from pygrabber.dshow_graph import FilterGraph, FilterType
-from pygrabber.dshow_ids import MediaTypes, MediaSubtypes
+from qrabber.pygrabber.dshow_graph import FilterGraph, FilterType
+from qrabber.pygrabber.dshow_ids import MediaTypes, MediaSubtypes
 from pyzbar.pyzbar import Decoded
 from pyzbar.pyzbar import decode
 from qrabber.grabber import WxGrabber

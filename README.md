@@ -8,6 +8,7 @@ So I tried to find an alternative. Which was hard.
 
 I finallly settled with:
 https://github.com/andreaschiavinato/python_grabber
+Currently it is vendored inside this repo until a version will be available on pypi.
 
 ## Installation
 
