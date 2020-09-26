@@ -9,7 +9,7 @@ author-email = "no_mail@nomail.com"
 home-page = "https://github.com/sander76/qrabber"
 classifiers = ["License :: OSI Approved :: MIT License"]
 requires-python=">=3.7"
-requires=["aio-wx-widgets","comtypes>=1.1.7","pyzbar","numpy"]
+requires=["aio-wx-widgets>=0.0.4","comtypes>=1.1.7","pyzbar","numpy","aiosubpub"]
 
 [tool.flit.metadata.requires-extra]
 test=["pytest","pytest-asyncio","pytest-mock"]

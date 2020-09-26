@@ -48,10 +48,10 @@ class ScannerModel:
         self._graph = FilterGraph()
         self._graph.add_video_input_device(0)
         filter_type = FilterType.sample_grabber
-        # assert not (filter_type in self._graph.filters)
-        filter = self._graph.filter_factory.build_filter(filter_type, None)
-        self._graph.filters[filter_type] = filter
-        self._graph.filter_graph.AddFilter(filter.instance, filter.Name)
+
+        _filter = self._graph.filter_factory.build_filter(filter_type, None)
+        self._graph.filters[filter_type] = _filter
+        self._graph.filter_graph.AddFilter(_filter.instance, _filter.Name)
 
         sample_grabber = self._graph.filters[FilterType.sample_grabber]
         sample_grabber_cb = WxGrabber(self.call_back)

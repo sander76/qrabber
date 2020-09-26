@@ -11,6 +11,7 @@ class ScannerView(wx.Panel):
     def __init__(
         self,
         parent,
+        controller,
         mirror_x=True,
         mirror_y=True,
         width=800,
@@ -37,6 +38,9 @@ class ScannerView(wx.Panel):
 
         self._mirror_x = mirror_x
         self._mirror_y = mirror_y
+
+        self._controller = controller
+        self._controller.frame_data.subscribe(self.set_frame)
 
     def on_show(self, event):
         if event.IsShown():
