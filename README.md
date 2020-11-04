@@ -12,7 +12,7 @@ Currently it is vendored inside this repo until a version will be available on p
 
 ## Installation
 
-`pip install qrabber`
+`pip install qgrabber`
 
 ## Usage
 

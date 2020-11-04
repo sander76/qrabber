@@ -5,8 +5,8 @@ from aiosubpub import Channel
 
 if TYPE_CHECKING:
     from pyzbar.pyzbar import Decoded
-    from qrabber.model import ScannerModel
-    from qrabber.view import ScannerView
+    from qgrabber.model import ScannerModel
+    from qgrabber.view import ScannerView
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -24,6 +24,11 @@ class Controller:
             on_code_scanned=self.stop_scan,
             crop_x=self._view_width,
             crop_y=self._view_height,
+        )
+
+    async def scan_code(self):
+        return await self._model.scan(
+            self._incoming_frame_data, self._view_width, self._view_height
         )
 
     def _incoming_frame_data(self, frame_data):

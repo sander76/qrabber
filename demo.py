@@ -9,9 +9,9 @@ from pyzbar.pyzbar import Decoded
 from wx.core import wxdate2pydate
 from wxasync import WxAsyncApp
 
-from qrabber.controller import Controller
-from qrabber.model import ScannerModel
-from qrabber.view import ScannerView
+from qgrabber.controller import Controller
+from qgrabber.model import ScannerModel
+from qgrabber.view import ScannerView
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -20,7 +20,7 @@ class MainWindow(DefaultFrame):
     def __init__(self):
         super().__init__("Main window")
         model = ScannerModel(stop_on_scan=True)
-        model.on_code_scanned.append(self._on_scan)
+        # model.on_code_scanned.append(self._on_scan)
 
         view_width = 640
         view_height = 480
@@ -41,7 +41,9 @@ class MainWindow(DefaultFrame):
         self.scan_results.set_text(str(first_result.data))
 
     async def _on_start(self, event):
-        self.controller.start_scan()
+        result = await self.controller.scan_code()
+        # self.controller.start_scan()
+        self.scan_results.set_text(str(result))
 
     async def _on_stop(self, event):
         print("stopping")

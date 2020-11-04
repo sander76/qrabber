@@ -26,7 +26,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from qrabber.pygrabber.dshow_graph import *
+from qgrabber.pygrabber.dshow_graph import *
 
 
 class PyGrabber:

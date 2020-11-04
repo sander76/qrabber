@@ -26,7 +26,7 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from qrabber.pygrabber.win_common_types import *
+from qgrabber.pygrabber.win_common_types import *
 from comtypes import DWORD
 from ctypes.wintypes import BOOL
 

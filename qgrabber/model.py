@@ -1,11 +1,12 @@
 import logging
+from asyncio.locks import Event
 from typing import List
 
-from qrabber.pygrabber.dshow_graph import FilterGraph, FilterType
-from qrabber.pygrabber.dshow_ids import MediaTypes, MediaSubtypes
+from qgrabber.pygrabber.dshow_graph import FilterGraph, FilterType
+from qgrabber.pygrabber.dshow_ids import MediaTypes, MediaSubtypes
 from pyzbar.pyzbar import Decoded
 from pyzbar.pyzbar import decode
-from qrabber.grabber import WxGrabber
+from qgrabber.grabber import WxGrabber
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -20,6 +21,12 @@ def cropper(frame, width, height):
 
 
 class ScannerModel:
+    """Scanner model managing the webcam.
+
+    Use the start function to start scanning with callbacks carrying results.
+    Use the async scan function to start scanning a wait for a scanned result.
+    """
+
     def __init__(self, stop_on_scan=False):
         self._graph = None
         self._crop_x = None
@@ -27,12 +34,28 @@ class ScannerModel:
         self._camera_callback = None
         self._stop_on_scan = stop_on_scan
         self.on_code_scanned = []
+        self._evt = Event()
+
+    async def scan(self, camera_call_back, crop_x=None, crop_y=None) -> str:
+        self._evt = Event()
+        _result = ""
+
+        def _on_code_scanned(result):
+            nonlocal _result
+            _result = result
+            self._evt.set()
+
+        self.start(camera_call_back, _on_code_scanned, crop_x, crop_y)
+
+        await self._evt.wait()
+        return _result
 
     def start(self, camera_callback, on_code_scanned, crop_x=None, crop_y=None):
         """Start the scanner.
 
         Args:
-            camera_callback: Called whenever image data from the camera is received.
+            camera_callback: Callable whenever image data from the camera is received.
+                Use this call to populate your view with the image data.
             on_code_scanned: Called when a code is detected.
             crop_x: image data crop_x
             crop_y: image data crop_y
@@ -72,12 +95,15 @@ class ScannerModel:
         codes = decode(frame)
         if codes:
             _LOGGER.debug(codes)
-            self.stop(codes)
+            for scanned_callback in self.on_code_scanned:
+                scanned_callback(codes)
+
             if self._stop_on_scan:
                 _LOGGER.debug("Stopping scanner.")
                 self._graph.stop()
 
     def call_back(self, frame):
+        """Process incoming frame data."""
         frame = cropper(frame, self._crop_x, self._crop_y)
         self.decode(frame)
         self._camera_callback(frame)

@@ -31,10 +31,10 @@ import os.path
 from enum import Enum
 from comtypes.persist import IPropertyBag
 
-from qrabber.pygrabber.dshow_core import *
-from qrabber.pygrabber.windows_media import *
-from qrabber.pygrabber.dshow_ids import *
-from qrabber.pygrabber.win_api_extra import *
+from qgrabber.pygrabber.dshow_core import *
+from qgrabber.pygrabber.windows_media import *
+from qgrabber.pygrabber.dshow_ids import *
+from qgrabber.pygrabber.win_api_extra import *
 
 
 class StateGraph(Enum):

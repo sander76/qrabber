@@ -28,8 +28,8 @@
 
 # see https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/um/axextend.idl for interface spec.
 
-from qrabber.pygrabber.moniker import *
-from qrabber.pygrabber.win_common_types import *
+from qgrabber.pygrabber.moniker import *
+from qgrabber.pygrabber.win_common_types import *
 from comtypes import *
 from comtypes import client
 from ctypes.wintypes import RECT, SIZE, ULONG, LPOLESTR, DWORD, LONG
