@@ -1,7 +1,8 @@
 import logging
 
-from qgrabber.pygrabber.dshow_graph import SampleGrabberCallback
 import numpy as np
+
+from qgrabber.pygrabber.dshow_graph import SampleGrabberCallback
 
 _LOGGER = logging.getLogger(__name__)
 

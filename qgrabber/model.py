@@ -2,11 +2,11 @@ import logging
 from asyncio.locks import Event
 from typing import List
 
-from qgrabber.pygrabber.dshow_graph import FilterGraph, FilterType
-from qgrabber.pygrabber.dshow_ids import MediaTypes, MediaSubtypes
-from pyzbar.pyzbar import Decoded
-from pyzbar.pyzbar import decode
+from pyzbar.pyzbar import Decoded, decode
+
 from qgrabber.grabber import WxGrabber
+from qgrabber.pygrabber.dshow_graph import FilterGraph, FilterType
+from qgrabber.pygrabber.dshow_ids import MediaSubtypes, MediaTypes
 
 _LOGGER = logging.getLogger(__name__)
 

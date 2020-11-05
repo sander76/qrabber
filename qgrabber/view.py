@@ -1,4 +1,5 @@
 import logging
+
 import wx
 from PIL import Image
 
@@ -40,12 +41,7 @@ class ScannerView(wx.Panel):
         self._mirror_y = mirror_y
 
         self._controller = controller
-        self._controller.frame_data.subscribe(self.set_frame)
-
-    def on_show(self, event):
-        if event.IsShown():
-            self.GetParent().Layout()
-            self.Layout()
+        self._controller.subscribe_to_frame_data(self.set_frame)
 
     def set_frame(self, frame):
         """Populate the image with raw data."""

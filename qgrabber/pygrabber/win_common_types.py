@@ -27,6 +27,7 @@
 #
 
 from ctypes.wintypes import SHORT
+
 from comtypes import *
 
 REFERENCE_TIME = c_longlong

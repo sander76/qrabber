@@ -5,4 +5,8 @@ repos:
         - id: black
           args:
             - --safe
-  
+    - repo: https://github.com/pycqa/isort
+      rev: 5.5.3
+      hooks:
+        - id: isort
+

@@ -26,15 +26,16 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-import numpy as np
 import os.path
 from enum import Enum
+
+import numpy as np
 from comtypes.persist import IPropertyBag
 
 from qgrabber.pygrabber.dshow_core import *
-from qgrabber.pygrabber.windows_media import *
 from qgrabber.pygrabber.dshow_ids import *
 from qgrabber.pygrabber.win_api_extra import *
+from qgrabber.pygrabber.windows_media import *
 
 
 class StateGraph(Enum):

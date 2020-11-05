@@ -1,10 +1,10 @@
 import asyncio
 import logging
 from typing import List
+
 import wx
 from aio_wx_widgets.frame import DefaultFrame
-from aio_wx_widgets.widgets import button
-from aio_wx_widgets.widgets import text
+from aio_wx_widgets.widgets import button, text
 from pyzbar.pyzbar import Decoded
 from wx.core import wxdate2pydate
 from wxasync import WxAsyncApp
@@ -22,8 +22,8 @@ class MainWindow(DefaultFrame):
         model = ScannerModel(stop_on_scan=True)
         # model.on_code_scanned.append(self._on_scan)
 
-        view_width = 640
-        view_height = 480
+        view_width = 320
+        view_height = 200
 
         self.controller = Controller(
             model, view_width=view_width, view_height=view_height
@@ -42,7 +42,6 @@ class MainWindow(DefaultFrame):
 
     async def _on_start(self, event):
         result = await self.controller.scan_code()
-        # self.controller.start_scan()
         self.scan_results.set_text(str(result))
 
     async def _on_stop(self, event):
@@ -61,9 +60,5 @@ if __name__ == "__main__":
     # os.environ["DEBUGGING"] = "1"
     logging.basicConfig(level=logging.DEBUG)
     loop = asyncio.get_event_loop()
-    # app = WxAsyncApp()
-    # main_window = MainWindow()
-    # main_window.Show()
-    # app.SetTopWindow(main_window)
-    # loop.run_until_complete(app.MainLoop())
+
     loop.run_until_complete(run_app())

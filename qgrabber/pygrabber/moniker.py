@@ -26,11 +26,18 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from comtypes import GUID
-from comtypes import IPersist
-from comtypes import IUnknown
-from comtypes import COMMETHOD, HRESULT, POINTER, c_int, c_ulong
 from ctypes.wintypes import _ULARGE_INTEGER
+
+from comtypes import (
+    COMMETHOD,
+    GUID,
+    HRESULT,
+    POINTER,
+    IPersist,
+    IUnknown,
+    c_int,
+    c_ulong,
+)
 
 
 class IPersistStream(IPersist):

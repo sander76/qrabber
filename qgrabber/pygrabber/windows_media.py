@@ -1,3 +1,5 @@
+# flake8: noqa
+
 #
 # python_grabber
 #
@@ -26,10 +28,11 @@
 # WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 #
 
-from qgrabber.pygrabber.win_common_types import *
-from comtypes import DWORD
 from ctypes.wintypes import BOOL
 
+from comtypes import DWORD
+
+from qgrabber.pygrabber.win_common_types import *
 
 LPCWSTR_WMSDK_TYPE_SAFE = POINTER(c_wchar)
 

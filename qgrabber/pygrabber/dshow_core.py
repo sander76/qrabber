@@ -28,13 +28,15 @@
 
 # see https://github.com/tpn/winsdk-10/blob/master/Include/10.0.16299.0/um/axextend.idl for interface spec.
 
-from qgrabber.pygrabber.moniker import *
-from qgrabber.pygrabber.win_common_types import *
+from ctypes import c_int, c_long, c_longlong
+from ctypes.wintypes import DWORD, LONG, LPOLESTR, RECT, SIZE, ULONG
+
 from comtypes import *
 from comtypes import client
-from ctypes.wintypes import RECT, SIZE, ULONG, LPOLESTR, DWORD, LONG
 from comtypes.automation import IDispatch
-from ctypes import c_int, c_long, c_longlong
+
+from qgrabber.pygrabber.moniker import *
+from qgrabber.pygrabber.win_common_types import *
 
 qedit = client.GetModule("qedit.dll")
 quartz = client.GetModule("quartz.dll")
