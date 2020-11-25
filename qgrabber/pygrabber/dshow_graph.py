@@ -29,6 +29,7 @@
 import os.path
 from enum import Enum
 
+import comtypes
 import numpy as np
 from comtypes.persist import IPropertyBag
 

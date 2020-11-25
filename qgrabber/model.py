@@ -1,6 +1,6 @@
 import logging
 from asyncio.locks import Event
-from typing import List
+from typing import List, Optional
 
 from pyzbar.pyzbar import Decoded, decode
 
@@ -27,18 +27,17 @@ class ScannerModel:
     Use the async scan function to start scanning a wait for a scanned result.
     """
 
-    def __init__(self, stop_on_scan=False):
+    def __init__(self):
         self._graph = None
         self._crop_x = None
         self._crop_y = None
         self._camera_callback = None
-        self._stop_on_scan = stop_on_scan
         self.on_code_scanned = []
         self._evt = Event()
 
-    async def scan(self, camera_call_back, crop_x=None, crop_y=None) -> str:
+    async def scan(self, camera_call_back, crop_x=None, crop_y=None) -> Optional[str]:
         self._evt = Event()
-        _result = ""
+        _result = None
 
         def _on_code_scanned(result):
             nonlocal _result
@@ -48,6 +47,7 @@ class ScannerModel:
         self.start(camera_call_back, _on_code_scanned, crop_x, crop_y)
 
         await self._evt.wait()
+        self.stop()
         return _result
 
     def start(self, camera_callback, on_code_scanned, crop_x=None, crop_y=None):
@@ -86,10 +86,13 @@ class ScannerModel:
         self._graph.prepare_preview_graph()
         self._graph.run()
 
-    def stop(self, result: List["Decoded"]):
+    def stop(self):
         """Stop the webcam."""
-        for scanned_callback in self.on_code_scanned:
-            scanned_callback(result)
+
+        if self._graph:
+            self._graph.stop()
+            self._graph = None
+        self._evt.set()
 
     def decode(self, frame):
         codes = decode(frame)
@@ -98,12 +101,9 @@ class ScannerModel:
             for scanned_callback in self.on_code_scanned:
                 scanned_callback(codes)
 
-            if self._stop_on_scan:
-                _LOGGER.debug("Stopping scanner.")
-                self._graph.stop()
-
     def call_back(self, frame):
         """Process incoming frame data."""
+        _LOGGER.debug("Calling back")
         frame = cropper(frame, self._crop_x, self._crop_y)
         self.decode(frame)
         self._camera_callback(frame)

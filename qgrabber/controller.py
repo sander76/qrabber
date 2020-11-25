@@ -1,4 +1,6 @@
+import asyncio
 import logging
+from asyncio import CancelledError
 from typing import TYPE_CHECKING, Callable, Optional
 
 if TYPE_CHECKING:
@@ -15,19 +17,32 @@ class Controller:
         self._view_width = view_width
         self._view_height = view_height
         self._on_stream_data: Optional[Callable[[bytearray], None]] = None
+        self._scan_task = None
 
-    def start_scan(self):
-        self._model.start(
-            self._on_stream_data,
-            on_code_scanned=self.code_scanned,
-            crop_x=self._view_width,
-            crop_y=self._view_height,
-        )
+    def start_scan_task(self):
+        loop = asyncio.get_running_loop()
+        self._scan_task = loop.create_task(self.scan_code())
+        self._scan_task.add_done_callback(self._scan_callback)
+
+    def _scan_callback(self, future: asyncio.Future):
+        future.result()
+
+    def cancel_scan_task(self):
+        if self._scan_task:
+            self._scan_task.cancel()
+
+    def stop_scan(self):
+        self._model.stop()
 
     async def scan_code(self):
-        return await self._model.scan(
-            self._on_stream_data, self._view_width, self._view_height
-        )
+        try:
+            return await self._model.scan(
+                self._on_stream_data, self._view_width, self._view_height
+            )
+        except Exception:
+            # _LOGGER.exception(err)
+            self.stop_scan()
+            raise
 
     def subscribe_to_frame_data(self, stream_handler):
         self._on_stream_data = stream_handler

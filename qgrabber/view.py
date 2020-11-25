@@ -45,7 +45,7 @@ class ScannerView(wx.Panel):
 
     def set_frame(self, frame):
         """Populate the image with raw data."""
-
+        _LOGGER.debug("Incomgin frame date")
         if self._mirror_x:
             scan_dir = -1
         else:

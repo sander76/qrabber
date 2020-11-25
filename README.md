@@ -1,4 +1,4 @@
-# grabber
+# QGrabber
 
 Scan QR codes using your webcam, pyzbar and wxpython. No usage of opencv
 
