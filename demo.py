@@ -65,24 +65,6 @@ class MainWindow(DefaultFrame):
         view.populate()
 
 
-#
-#
-#
-# class MainWindow(DefaultFrame):
-#     def __init__(self):
-#         super().__init__("Main window")
-#         model = ScannerModel()
-#         # model.on_code_scanned.append(self._on_scan)
-#
-#         view_width = 320
-#         view_height = 200
-#
-#         self.controller = Controller(
-#             model, view_width=view_width, view_height=view_height
-#         )
-#
-
-
 async def run_app():
     app = WxAsyncApp()
     main_window = MainWindow()
