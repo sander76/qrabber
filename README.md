@@ -10,6 +10,10 @@ I finallly settled with:
 https://github.com/andreaschiavinato/python_grabber
 Currently it is vendored inside this repo until a version will be available on pypi.
 
+UPDATE:
+Changed the webcam component from python_grabber to videocapture. I will update the docs soon.
+
+
 ## Installation
 
 `pip install qgrabber`

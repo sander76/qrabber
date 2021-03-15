@@ -1,23 +1,12 @@
+import asyncio
 import logging
-from asyncio.locks import Event
-from typing import List, Optional
+from typing import Optional
 
-from pyzbar.pyzbar import Decoded, decode
-
-from qgrabber.grabber import WxGrabber
-from qgrabber.pygrabber.dshow_graph import FilterGraph, FilterType
-from qgrabber.pygrabber.dshow_ids import MediaSubtypes, MediaTypes
+from PIL.Image import Image
+from pyzbar.pyzbar import decode
+from VideoCapture import Device
 
 _LOGGER = logging.getLogger(__name__)
-
-
-def cropper(frame, width, height):
-    if width is None:
-        return frame
-    y, x = frame.shape[:2]
-    startx = x // 2 - width // 2
-    starty = y // 2 - height // 2
-    return frame[starty : starty + height, startx : startx + width].copy(order="C")
 
 
 class ScannerModel:
@@ -29,81 +18,40 @@ class ScannerModel:
 
     def __init__(self):
         self._graph = None
-        self._crop_x = None
-        self._crop_y = None
         self._camera_callback = None
-        self.on_code_scanned = []
-        self._evt = Event()
+        self._camera = None
+        self._stop_scan = False
 
-    async def scan(self, camera_call_back, crop_x=None, crop_y=None) -> Optional[str]:
-        self._evt = Event()
-        _result = None
-
-        def _on_code_scanned(result):
-            nonlocal _result
-            _result = result
-            self._evt.set()
-
-        self.start(camera_call_back, _on_code_scanned, crop_x, crop_y)
-
-        await self._evt.wait()
-        self.stop()
-        return _result
-
-    def start(self, camera_callback, on_code_scanned, crop_x=None, crop_y=None):
-        """Start the scanner.
-
-        Args:
-            camera_callback: Callable whenever image data from the camera is received.
-                Use this call to populate your view with the image data.
-            on_code_scanned: Called when a code is detected.
-            crop_x: image data crop_x
-            crop_y: image data crop_y
-
-        Returns:
-
-        """
+    async def scan(self, camera_callback, crop_x=None, crop_y=None) -> Optional[str]:
         self._camera_callback = camera_callback
-        self._crop_x = crop_x
-        self._crop_y = crop_y
-        self.on_code_scanned.append(on_code_scanned)
 
-        self._graph = FilterGraph()
-        self._graph.add_video_input_device(0)
-        filter_type = FilterType.sample_grabber
+        self._camera = Device(devnum=0, showVideoWindow=0)
 
-        _filter = self._graph.filter_factory.build_filter(filter_type, None)
-        self._graph.filters[filter_type] = _filter
-        self._graph.filter_graph.AddFilter(_filter.instance, _filter.Name)
+        self._stop_scan = False
+        code = None
+        try:
+            while not self._stop_scan:
+                buffer = self._camera.getImage()
+                buffer = crop(buffer, crop_x, crop_y)
+                self._camera_callback(buffer)
+                code = decode(buffer)
+                if code:
+                    break
+                await asyncio.sleep(0.1)
+        finally:
+            del self._camera
 
-        sample_grabber = self._graph.filters[FilterType.sample_grabber]
-        sample_grabber_cb = WxGrabber(self.call_back)
-
-        sample_grabber.set_callback(sample_grabber_cb, 1)
-        sample_grabber.set_media_type(MediaTypes.Video, MediaSubtypes.RGB24)
-
-        self._graph.add_null_render()
-        self._graph.prepare_preview_graph()
-        self._graph.run()
+        return code
 
     def stop(self):
         """Stop the webcam."""
+        self._stop_scan = True
+        # if self._camera:
+        #     del self._camera
 
-        if self._graph:
-            self._graph.stop()
-            self._graph = None
-        self._evt.set()
 
-    def decode(self, frame):
-        codes = decode(frame)
-        if codes:
-            _LOGGER.debug(codes)
-            for scanned_callback in self.on_code_scanned:
-                scanned_callback(codes)
-
-    def call_back(self, frame):
-        """Process incoming frame data."""
-        _LOGGER.debug("Calling back")
-        frame = cropper(frame, self._crop_x, self._crop_y)
-        self.decode(frame)
-        self._camera_callback(frame)
+def crop(data: Image, crop_x, crop_y):
+    x, y = data.size
+    return data.crop(
+        ((x - crop_x) // 2, (y - crop_y) // 2, (x + crop_x) // 2, (y + crop_y) // 2)
+    )

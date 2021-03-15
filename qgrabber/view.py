@@ -35,7 +35,7 @@ class ScannerView(wx.Panel):
         self.width = width
         self.height = height
 
-        self.buffer = wx.NullBitmap
+        # self.buffer = wx.NullBitmap
 
         self._mirror_x = mirror_x
         self._mirror_y = mirror_y
@@ -43,23 +43,19 @@ class ScannerView(wx.Panel):
         self._controller = controller
         self._controller.subscribe_to_frame_data(self.set_frame)
 
-    def set_frame(self, frame):
-        """Populate the image with raw data."""
-        _LOGGER.debug("Incomgin frame date")
-        if self._mirror_x:
-            scan_dir = -1
-        else:
-            scan_dir = 1
+    def set_frame(self, image):
+        """Populate the image with raw data.
 
-        im = Image.frombytes(
-            "RGB", (self.width, self.height), frame, "raw", "BGR", 0, scan_dir,
-        )
+        Args:
+            image: A Pillow image.
+
+        """
+        # _LOGGER.debug("Incomgin frame date")
         if self._mirror_y:
-            im = im.transpose(Image.FLIP_LEFT_RIGHT)
+            image = image.transpose(Image.FLIP_LEFT_RIGHT)
+        frame = image.tobytes()
 
-        frame = im.tobytes()
-
-        self.buffer = wx.Bitmap.FromBuffer(self.width, self.height, frame)
+        buffer = wx.Bitmap.FromBuffer(self.width, self.height, frame)
         dc = wx.BufferedDC(wx.ClientDC(self), wx.NullBitmap, wx.BUFFER_VIRTUAL_AREA)
         dc.Clear()
-        dc.DrawBitmap(self.buffer, 0, 0)
+        dc.DrawBitmap(buffer, 0, 0)

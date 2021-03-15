@@ -1,6 +1,7 @@
+from __future__ import annotations
+
 import asyncio
 import logging
-from asyncio import CancelledError
 from typing import TYPE_CHECKING, Callable, Optional
 
 if TYPE_CHECKING:
@@ -40,14 +41,13 @@ class Controller:
                 self._on_stream_data, self._view_width, self._view_height
             )
         except Exception:
-            # _LOGGER.exception(err)
             self.stop_scan()
             raise
 
     def subscribe_to_frame_data(self, stream_handler):
         self._on_stream_data = stream_handler
 
-    def code_scanned(self, result: Optional["Decoded"] = None):
+    def code_scanned(self, result: Optional[Decoded] = None):
         """Called when a qr code has been detected."""
         if result:
             print(result)
